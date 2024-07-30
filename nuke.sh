@@ -1,7 +1,9 @@
 #!/bin/bash
 devname=$(basename $1)
+mqtt_server=10.0.50.47
 
 echo "NUKING $1" >> /var/log/PiBAN.log
+mosquitto_pub -h $mqtt_server -p 1883 -u $CHIPWIPE_USER -P $CHIPWIPE_PASS -t chip/piBAN -m "NUKING $1 on chip" || True
 #TURN ON LED GPIO # 0 on GHIP ### http://chip.jfpossibilities.com/docs/chip.html#how-the-system-sees-gpio
 sudo sh -c 'echo 1013 > /sys/class/gpio/unexport'
 sleep 3
@@ -78,4 +80,4 @@ sudo sh -c 'echo 1013 > /sys/class/gpio/unexport'
 
 
 echo "Drive Completed $1" >> /var/log/PiBAN.log
-
+mosquitto_pub -h $mqtt_server -p 1883 -u $CHIPWIPE_USER -P $CHIPWIPE_PASS -t chip/piBAN -m "Drive Completed $1 on chip" || True
