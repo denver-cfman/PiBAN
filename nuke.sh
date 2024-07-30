@@ -3,8 +3,8 @@ devname=$(basename $1)
 
 echo "NUKING $1" >> /var/log/PiBAN.log
 #TURN ON LED
-gpio -g mode 17 out
-gpio -g write 17 1
+#gpio -g mode 17 out
+#gpio -g write 17 1
 
 # This next line handles securely erasing the disk.
 # Pick one. Or none if you don't need secure erase.
@@ -69,7 +69,7 @@ rmdir $mntpath
 sync #SYNC because I don't trust the kernel to do it for me.
 
 #TURN OFF LED
-gpio -g write 17 0
+#gpio -g write 17 0
 
 echo "Drive Completed $1" >> /var/log/PiBAN.log
 
