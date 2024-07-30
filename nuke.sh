@@ -2,9 +2,13 @@
 devname=$(basename $1)
 
 echo "NUKING $1" >> /var/log/PiBAN.log
-#TURN ON LED
-#gpio -g mode 7 out
-#gpio -g write 7 1
+#TURN ON LED GPIO # 0 on GHIP ### http://chip.jfpossibilities.com/docs/chip.html#how-the-system-sees-gpio
+sudo sh -c 'echo 1013 > /sys/class/gpio/unexport'
+sleep 3
+sudo sh -c 'echo 1013 > /sys/class/gpio/export'
+sudo sh -c 'echo out > /sys/class/gpio/gpio1013/direction'
+sudo sh -c 'echo 0 > /sys/class/gpio/gpio1013/value'
+sudo sh -c 'echo 1 > /sys/class/gpio/gpio1013/value'
 
 # This next line handles securely erasing the disk.
 # Pick one. Or none if you don't need secure erase.
@@ -69,7 +73,9 @@ rmdir $mntpath
 sync #SYNC because I don't trust the kernel to do it for me.
 
 #TURN OFF LED
-#gpio -g write 7 0
+sudo sh -c 'echo 0 > /sys/class/gpio/gpio1013/value'
+sudo sh -c 'echo 1013 > /sys/class/gpio/unexport'
+
 
 echo "Drive Completed $1" >> /var/log/PiBAN.log
 
