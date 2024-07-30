@@ -3,14 +3,14 @@ devname=$(basename $1)
 mqtt_server=10.0.50.47
 
 echo "NUKING $1" >> /var/log/PiBAN.log
-mosquitto_pub -h $mqtt_server -p 1883 -u $CHIPWIPE_USER -P $CHIPWIPE_PASS -t chip/piBAN -m "NUKING $1 on chip" || True
+/usr/bin/mosquitto_pub -h $mqtt_server -p 1883 -u $CHIPWIPE_USER -P $CHIPWIPE_PASS -t chip/piBAN -m "NUKING $1 on chip" || True
 #TURN ON LED GPIO # 0 on GHIP ### http://chip.jfpossibilities.com/docs/chip.html#how-the-system-sees-gpio
-sudo sh -c 'echo 1013 > /sys/class/gpio/unexport'
+sudo sh -c 'echo 1013 > /sys/class/gpio/unexport' || True
 sleep 3
 sudo sh -c 'echo 1013 > /sys/class/gpio/export'
-sudo sh -c 'echo out > /sys/class/gpio/gpio1013/direction'
-sudo sh -c 'echo 0 > /sys/class/gpio/gpio1013/value'
-sudo sh -c 'echo 1 > /sys/class/gpio/gpio1013/value'
+sudo sh -c 'echo out > /sys/class/gpio/gpio1013/direction' || True
+sudo sh -c 'echo 0 > /sys/class/gpio/gpio1013/value' || True
+sudo sh -c 'echo 1 > /sys/class/gpio/gpio1013/value' || True
 
 # This next line handles securely erasing the disk.
 # Pick one. Or none if you don't need secure erase.
@@ -75,9 +75,9 @@ rmdir $mntpath
 sync #SYNC because I don't trust the kernel to do it for me.
 
 #TURN OFF LED
-sudo sh -c 'echo 0 > /sys/class/gpio/gpio1013/value'
-sudo sh -c 'echo 1013 > /sys/class/gpio/unexport'
+sudo sh -c 'echo 0 > /sys/class/gpio/gpio1013/value' || True
+sudo sh -c 'echo 1013 > /sys/class/gpio/unexport' || True
 
 
 echo "Drive Completed $1" >> /var/log/PiBAN.log
-mosquitto_pub -h $mqtt_server -p 1883 -u $CHIPWIPE_USER -P $CHIPWIPE_PASS -t chip/piBAN -m "Drive Completed $1 on chip" || True
+/usr/bin/mosquitto_pub -h $mqtt_server -p 1883 -u $CHIPWIPE_USER -P $CHIPWIPE_PASS -t chip/piBAN -m "Drive Completed $1 on chip" || True
