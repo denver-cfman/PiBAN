@@ -1,6 +1,8 @@
 #!/bin/bash
 devname=$(basename $1)
 mqtt_server=10.0.50.47
+CHIPWIPE_USER=changeme
+CHIPWIPE_PASS=changeme
 
 echo "NUKING $1" >> /var/log/PiBAN.log
 /usr/bin/mosquitto_pub -h $mqtt_server -p 1883 -u $CHIPWIPE_USER -P $CHIPWIPE_PASS -t chip/piBAN -m "NUKING $1 on chip" || True
@@ -16,6 +18,10 @@ sudo sh -c 'echo 1 > /sys/class/gpio/gpio1013/value' || True
 # Pick one. Or none if you don't need secure erase.
 # 1 Pass. (Fastest)
 shred -v --iterations=1 "$1"
+
+echo "NUKING Done on $1" >> /var/log/PiBAN.log
+/usr/bin/mosquitto_pub -h $mqtt_server -p 1883 -u $CHIPWIPE_USER -P $CHIPWIPE_PASS -t chip/piBAN -m "NUKING Done on $1 via chip" || True
+
 # This will run a DOD Short erase(3 passes)(Slow)
 #nwipe --autonuke --nogui --nowait "$1"
 # DOD 5220.22-M (7 Passes)(Just use a hammer instead)
